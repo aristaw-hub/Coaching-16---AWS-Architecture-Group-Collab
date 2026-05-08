@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 1.14.0"
-  
+
   # 1. Backend Configuration
   # Ensure the bucket "sctp-ce12-tfstate-bucket" exists before running 'terraform init'
   backend "s3" {
