@@ -36,7 +36,7 @@ data "aws_acm_certificate" "cert" {
 # This creates a new bucket for your application use (separate from the backend bucket)
 resource "aws_s3_bucket" "s3_tf" {
   bucket_prefix = "arista-ce12-7may-bucket" # AWS requires lowercase for bucket names
-  
+
   tags = {
     Name        = "Arista Bucket"
     Environment = "Dev"
