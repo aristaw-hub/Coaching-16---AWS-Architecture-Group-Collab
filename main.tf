@@ -1,5 +1,6 @@
 terraform {
   required_version = ">= 1.14.0"
+
   # 1. Backend Configuration
   # Ensure the bucket "sctp-ce12-tfstate-bucket" exists before running 'terraform init'
   backend "s3" {
@@ -23,15 +24,15 @@ provider "aws" {
 
 # 3. Data Sources
 # These fetch existing infrastructure details for your Custom Domain and SSL Cert
-data "aws_route53_zone" "sctp_zone" {
-  name = "sctp-sandbox.com"
-}
+#data "aws_route53_zone" "sctp_zone" {
+#  name = "sctp-sandbox.com"
+#}
 
-data "aws_acm_certificate" "cert" {
-  domain      = "*.sctp-sandbox.com"
-  statuses    = ["ISSUED"]
-  most_recent = true
-}
+#data "aws_acm_certificate" "cert" {
+#  domain      = "*.sctp-sandbox.com"
+#  statuses    = ["ISSUED"]
+#  most_recent = true
+#}
 
 # 4. S3 Bucket Resource
 # This creates a new bucket for your application use (separate from the backend bucket)
