@@ -51,3 +51,41 @@ resource "aws_s3_bucket_versioning" "s3_versioning" {
     status = "Enabled"
   }
 }
+
+# Data sources for DNS and SSL
+data "aws_route53_zone" "sctp_zone" {
+  name = "sctp-sandbox.com"
+}
+
+data "aws_acm_certificate" "cert" {
+  domain      = "*.sctp-sandbox.com"
+  statuses    = ["ISSUED"]
+  most_recent = true
+}
+
+# The requested application bucket
+resource "aws_s3_bucket" "app_bucket" {
+  bucket_prefix = "arista-ce12-7may-bucket"
+  
+  tags = {
+    Name  = "Arista App Bucket"
+    Group = "Group5"
+  }
+}
+
+# DynamoDB Table
+resource "aws_dynamodb_table" "url_table" {
+  name         = "group5-url-shortener"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "short_id"
+
+  attribute {
+    name = "short_id"
+    type = "S"
+  }
+
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
+}
