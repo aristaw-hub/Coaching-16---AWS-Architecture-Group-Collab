@@ -1,4 +1,5 @@
 terraform {
+  required_version = ">= 1.14.0"
   # 1. Backend Configuration
   # Ensure the bucket "sctp-ce12-tfstate-bucket" exists before running 'terraform init'
   backend "s3" {
@@ -36,7 +37,7 @@ data "aws_acm_certificate" "cert" {
 # This creates a new bucket for your application use (separate from the backend bucket)
 resource "aws_s3_bucket" "s3_tf" {
   bucket_prefix = "arista-ce12-7may-bucket" # AWS requires lowercase for bucket names
-  
+
   tags = {
     Name        = "Arista Bucket"
     Environment = "Dev"
@@ -49,5 +50,43 @@ resource "aws_s3_bucket_versioning" "s3_versioning" {
   bucket = aws_s3_bucket.s3_tf.id
   versioning_configuration {
     status = "Enabled"
+  }
+}
+
+# Data sources for DNS and SSL
+data "aws_route53_zone" "sctp_zone" {
+  name = "sctp-sandbox.com"
+}
+
+data "aws_acm_certificate" "cert" {
+  domain      = "*.sctp-sandbox.com"
+  statuses    = ["ISSUED"]
+  most_recent = true
+}
+
+# The requested application bucket
+resource "aws_s3_bucket" "app_bucket" {
+  bucket_prefix = "arista-ce12-7may-bucket"
+
+  tags = {
+    Name  = "Arista App Bucket"
+    Group = "Group5"
+  }
+}
+
+# DynamoDB Table
+resource "aws_dynamodb_table" "url_table" {
+  name         = "group5-url-shortener"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "short_id"
+
+  attribute {
+    name = "short_id"
+    type = "S"
+  }
+
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
   }
 }
