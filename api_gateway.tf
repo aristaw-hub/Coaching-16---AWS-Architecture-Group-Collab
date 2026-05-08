@@ -68,10 +68,10 @@ resource "aws_api_gateway_integration_response" "int_resp" {
 
 # Domain & Stage
 resource "aws_api_gateway_stage" "prod" {
-  deployment_id = aws_api_gateway_deployment.main.id
-  rest_api_id   = aws_api_gateway_rest_api.api.id
-  stage_name    = "prod"
-  tracing_enabled = true
+  deployment_id        = aws_api_gateway_deployment.main.id
+  rest_api_id          = aws_api_gateway_rest_api.api.id
+  stage_name           = "prod"
+  xray_tracing_enabled = true
 }
 
 resource "aws_api_gateway_deployment" "main" {
@@ -96,22 +96,22 @@ resource "aws_route53_record" "dns" {
   type    = "A"
   zone_id = data.aws_route53_zone.sctp_zone.zone_id
   alias {
-    name = aws_api_gateway_domain_name.custom.regional_domain_name
-    zone_id = aws_api_gateway_domain_name.custom.regional_zone_id
+    name                   = aws_api_gateway_domain_name.custom.regional_domain_name
+    zone_id                = aws_api_gateway_domain_name.custom.regional_zone_id
     evaluate_target_health = false
   }
 }
 
 resource "aws_lambda_permission" "apigw_create" {
-  action = "lambda:InvokeFunction"
+  action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.create_url.function_name
-  principal = "apigateway.amazonaws.com"
-  source_arn = "${aws_api_gateway_rest_api.api.execution_arn}/*/*"
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/*"
 }
 
 resource "aws_lambda_permission" "apigw_retrieve" {
-  action = "lambda:InvokeFunction"
+  action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.retrieve_url.function_name
-  principal = "apigateway.amazonaws.com"
-  source_arn = "${aws_api_gateway_rest_api.api.execution_arn}/*/*"
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_api_gateway_rest_api.api.execution_arn}/*/*"
 }

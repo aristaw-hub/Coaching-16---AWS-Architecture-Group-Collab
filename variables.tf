@@ -14,7 +14,7 @@ variable "my_ip" {
   #description = "Your public IP"
   #type         = string
   #default     = "0.0.0.0/32" # UPDATE THIS
-  description  = "The IP range allowed to access the API. Set to 0.0.0.0/0 to allow global access."
-  type         = string
+  description = "The IP range allowed to access the API. Set to 0.0.0.0/0 to allow global access."
+  type        = string
   default     = "0.0.0.0/0"
 }
